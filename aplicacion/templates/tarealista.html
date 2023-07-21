@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Comentarios</h1>
+    <a href="{% url "creartarea" %}"><input type="submit" value="crear nuevo posteo"/></a>
+    <br>
+    <br>
+    <form action="{% url "tarealista" %}" method="GET">
+    <input type="text" name="filtro" id="">
+    <button type="sumbit">filtrar</button>    
+    </form>
+    <br>
+    <br>
+    <br>
+
+    <div class="post">
+        {% for tarea in tareas %}
+            <h3><a href="{% url "modifitarea" tarea.id %}"> {{tarea.tema}}</a></h3>
+            <p>{{tarea.nombre}}</p>
+            <p>autor: {{tarea.medico}}</p>
+            <p>creado el:{{tarea.fecha}}</p>
+            <a href="{% url "eliminar" tarea.id %}"><input type="submit" value="eliminar"/></a>
+            
+            
+
+    </div>
+        {% endfor %}
+</body>
+<div class="container">
+    <section class="elementor-section elementor-top-section elementor-element elementor-element-763d4844 elementor-section-content-middle elementor-section-boxed elementor-section-height-default elementor-section-height-default"
+        data-id="763d4844" data-element_type="section"
+        data-settings="{&quot;_ob_glider_is_slider&quot;:&quot;no&quot;}">
+        <div class="elementor-container elementor-column-gap-no">
+                <div class="elementor-row">
+                        <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-7ff9712a"
+                                data-id="7ff9712a" data-element_type="column">
+                                <div class="elementor-column-wrap elementor-element-populated">
+                                        <div class="elementor-widget-wrap">
+                                                <div class="elementor-element elementor-element-67664699 elementor-absolute elementor-hidden-desktop elementor-widget-mobile__width-auto elementor-hidden-tablet elementor-widget elementor-widget-temegum_toggle_collapse"
+                                                        data-id="67664699" data-element_type="widget"
+                                                        data-settings="{&quot;_position&quot;:&quot;absolute&quot;}"
+                                                        data-widget_type="temegum_toggle_collapse.default">
+                                                        <div class="elementor-widget-container">
+                                                                <div>
+                                                                        <div class="toggle-collapse-link icon-left"
+                                                                                data-target="menu-movil"
+                                                                                data-target-state="">
+                                                                                <span class="toggle-icons"><span
+                                                                                                class="toggle-icon toggle-open"><i
+                                                                                                        class="fas fa-bars"
+                                                                                                        aria-hidden="true"></i></span><span
+                                                                                                class="toggle-icon toggle-collapse"><i
+                                                                                                        class="fas fa-bars"
+                                                                                                        aria-hidden="true"></i></span></span>
+                                                                                <span class="toggle-text"></span>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                                <div class="elementor-element elementor-element-4aa6500a elementor-widget elementor-widget-theme-site-logo elementor-widget-image"
+                                                        data-id="4aa6500a" data-element_type="widget"
+                                                        data-widget_type="theme-site-logo.default">
+                                                        <div class="elementor-widget-container">
+                                                                <div class="elementor-image">
+                                                                                <div style="text-align: right;">>
+                                                                        <a href="https://www.andessaludchillan.cl">
+                                                                                <img width="648" height="281"
+                                                                                        src="https://www.andessaludchillan.cl/wp-content/uploads/2022/07/logotipo.png"
+                                                                                        
+                                                                                        class="attachment-full size-full wp-image-31739"
+                                                                                        alt="" loading="lazy"
+                                                                                        ></a></div>
+                                                                </div>
+</html>
+{% endblock  %}

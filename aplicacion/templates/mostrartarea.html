@@ -1,0 +1,20 @@
+{% extends 'paciente_1.html' %}
+
+{% block content %}
+<h1>Ver Comentarios</h1>
+
+
+<div class="container">
+    {% for tarea in tareas %}
+    
+    <ul>
+        
+        <li>Titulo del Comentario: {{ tarea.nombre }}</li>
+        <li>tema: {{ tarea.tema }}</li>
+        <li>fecha: {{ tarea.fecha }}</li>
+        <li>Nombre medico: {{ tarea.medico }}</li>
+    </ul>
+    {% endfor %}
+</div>
+
+{% endblock %}

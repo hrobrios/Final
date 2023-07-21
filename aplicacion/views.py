@@ -1,0 +1,187 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
+from .forms import UserRegistrationForm
+from .forms import UsuarioForm, TareaForm, PacienteForm
+from .models import Usuario, Tarea, Paciente
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+
+
+
+def inicio(request):
+    return render(request, "home.html")
+
+def acceso(request):
+    return render(request, "acceso.html")
+
+def ficha1(request):
+    return render(request,"paciente_1.html")
+
+
+@login_required
+def register_user(request):#el request es todo lo que traemos desde hmtl
+    if request.method == "POST":
+        form = UserRegistrationForm(request.POST)#se crea instancia userregistration
+        if form.is_valid():
+            user = form.save()
+            group = form.cleaned_data['group']
+            permissions = form.cleaned_data['permissions']
+            username = form.cleaned_data['username']
+            user.groups.add(group)
+            user.user_permissions.set(permissions)
+            messages.success(request, f'Usuario {username} creado exitosamente!!')
+            return redirect('acceso')
+    else: #si no hago post, devolverá al formulario register user
+        form = UserRegistrationForm()
+    
+    context = {'form': form}
+    return render(request, 'register_user.html', context)
+
+
+@login_required
+def home(request):
+    users = User.objects.all() #ESTO  ES TRAER BASE DE DATOS PARA EXTRAER INFO
+#OBJECTS CON S ES UNA FUNCION PARA TRAER ALGO DE UNA TABLA, INTERACTUA ON LA BASE DE DATOS
+# USER (BASE DA DATOS), OBJECTS(MANEJA LA INFO), ALL (METODO QUE TRAE TODOS LAS FILAS DE LA TABLA USER)   
+    nuevos = ["", ""]
+
+    context = {
+        "usuarios": users,
+        "otros": nuevos,
+    }
+
+    return render(request, "users.html", context=context)
+
+
+@login_required
+def crear_usuario(request):
+    form = UsuarioForm()
+
+    if request.method == "POST":#post trae info solicitada con get
+        print(request)
+        form = UsuarioForm(request.POST)#trae un formulario que se base en el post
+
+        if form.is_valid():#se validará lo que coincida en el modelo creado en el FORMS:PY
+            print(form)
+            usuario = Usuario()#se crea el objeto del modelo y el cleaned_data filtra el imput que traemos
+            usuario.nombre = form.cleaned_data['nombre']
+            usuario.apellido = form.cleaned_data['apellido']
+            usuario.save()
+        else:
+            print("Datos invalidos")
+        return redirect('/acceso')
+    
+    context = {
+        'form': form
+    }
+
+    return render(request, 'formulariouser.html', context=context)
+
+
+
+
+
+#@login_required
+#def tareas(request):
+#    form = TareaForm()
+
+#    if request.method == "POST":
+#        form = TareaForm(request.POST)
+#        if form.is_valid():
+#            print(form)
+#            tarea = Tarea()
+#            tarea.medico = form.cleaned_data["medico"]
+#            tarea.nombre = form.cleaned_data['nombre']
+#            tarea.tema = form.cleaned_data['tema']
+#            tarea.fecha = form.cleaned_data['fecha']
+#            tarea.save()
+#        else:
+#            print("Datos invalidos")
+#        return redirect('/tareas')
+#    context = {'form': form}
+
+#    return render(request, 'tareas.html', context=context)#se pone aplicacion+el nombre del html, porque tempmlate/tiene dentro aplicacion. en su defecto de hace directo
+
+@login_required
+def mostrartarea(request):
+
+    datos = Tarea.objects.all()
+
+    context = {'tareas': datos}
+
+    return render(request, 'mostrartarea.html', context=context)
+
+
+
+@login_required
+def pacientes(request):
+    form =PacienteForm()
+
+    if request.method == "POST":
+        form = PacienteForm(request.POST)
+        if form.is_valid():
+            print(form)
+            paciente = Paciente()
+            paciente.nombre = form.cleaned_data['nombre']
+            paciente.apellido = form.cleaned_data["apellido"]
+            paciente.prevision = form.cleaned_data['prevision']
+            paciente.save()
+        else:
+            print("Datos invalidos")
+        return redirect('/pacientes')
+    context = {'form': form}
+
+    return render(request, 'pacientes.html', context=context)
+
+
+
+@login_required
+def mostrarpaciente(request):
+
+    datos = Paciente.objects.all()
+    
+    context = {'pacientes': datos}
+
+    return render(request, 'mostrarpaciente.html', context=context)
+
+
+
+    
+class TareaCreateView(CreateView):
+    model = Tarea
+    form_class = TareaForm
+    template_name = "creartarea.html"
+    success_url = reverse_lazy("tarealista")
+
+
+
+class TareaListView(ListView):
+    model = Tarea
+    template_name = "tarealista.html"
+    context_object_name = "tareas"
+
+    def get_queryset(self):
+        queryset =super().get_queryset()
+        filtro = self.request.GET.get("filtro")
+
+        if filtro:
+            queryset = queryset.filter(tema__icontains=filtro)
+            
+        return queryset
+    
+
+class TareaUpdateView(UpdateView):
+    model = Tarea
+    form_class = TareaForm
+    template_name = "modifitarea.html"
+    success_url = reverse_lazy("tarealista")
+
+
+
+class TareaDeleteView(DeleteView):
+    model = Tarea
+    template_name = "eliminar.html"
+    success_url = reverse_lazy("tarealista")

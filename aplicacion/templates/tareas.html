@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Comentarios</h1>
+<div class="container mb-7 mt-5">
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+        
+    
+    </form>    
+
+    <div class="tarea">
+        {% for tarea in tareas %}
+            <h3><a href="{% url "modificar" tarea.id %}"> {{tarea.tema}}</a></h3>
+            <p>{{tema.tema}}</p>
+            <p>nombre: {{tarea.nombre.username}}</p>
+            <p>creado el:{{tarea.fecha}}</p>
+            <a href="{% url "eliminar" tarea.id %}"><input type="submit" value="eliminar"/></a>
+            
+    
+    </div>
+    {% endfor  %}
+
+</div>
+
+{% endblock  %}
